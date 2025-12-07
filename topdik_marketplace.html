@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Topdik.uz - Eng yaxshi takliflarni toping</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #F8F9FA;
+            color: #2C3E50;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: white;
+            padding: 16px 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            gap: 32px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1E63C7;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .search-bar {
+            flex: 1;
+            max-width: 600px;
+            position: relative;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 12px 48px 12px 20px;
+            border: 2px solid #E8EDF2;
+            border-radius: 12px;
+            font-size: 15px;
+            transition: all 0.2s;
+        }
+
+        .search-bar input:focus {
+            outline: none;
+            border-color: #1E63C7;
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #1E63C7;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .lang-switch {
+            display: flex;
+            gap: 4px;
+            background: #F0F4F8;
+            padding: 6px;
+            border-radius: 10px;
+        }
+
+        .lang-btn {
+            padding: 6px 12px;
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            color: #64748B;
+            transition: all 0.2s;
+        }
+
+        .lang-btn.active {
+            background: white;
+            color: #1E63C7;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+        }
+
+        .btn-login {
+            padding: 10px 20px;
+            border: 2px solid #1E63C7;
+            background: white;
+            color: #1E63C7;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-login:hover {
+            background: #1E63C7;
+            color: white;
+        }
+
+        .cart-icon {
+            width: 20px;
+            height: 20px;
+            color: #64748B;
+            cursor: pointer;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #1E63C7 0%, #2C7FE8 100%);
+            padding: 80px 24px;
+            text-align: center;
+            color: white;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 32px;
+            font-weight: 700;
+        }
+
+        .hero-search {
+            position: relative;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .hero-search input {
+            width: 100%;
+            padding: 18px 60px 18px 24px;
+            border: none;
+            border-radius: 16px;
+            font-size: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .hero-search button {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            padding: 12px 24px;
+            background: #1E63C7;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Categories Section */
+        .section {
+            padding: 60px 0;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .section-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #2C3E50;
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+        }
+
+        .category-card {
+            background: white;
+            padding: 32px 24px;
+            border-radius: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .category-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .category-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 16px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+        }
+
+        .cat-electronics { background: #FFF4E6; color: #FF8C00; }
+        .cat-fashion { background: #FFE6E6; color: #E74C3C; }
+        .cat-home { background: #E6F7E6; color: #27AE60; }
+        .cat-beauty { background: #FFE6F0; color: #E91E63; }
+        .cat-kids { background: #E6F2FF; color: #2196F3; }
+        .cat-sports { background: #E0F7FA; color: #00BCD4; }
+
+        .category-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2C3E50;
+        }
+
+        /* Daily Offers */
+        .offers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 20px;
+        }
+
+        .offer-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .offer-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .offer-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 16px;
+            background: #F0F4F8;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+        }
+
+        .offer-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2C3E50;
+            margin-bottom: 8px;
+        }
+
+        .offer-price {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1E63C7;
+        }
+
+        /* Product Grid */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 220px;
+            background: #F0F4F8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+        }
+
+        .product-info {
+            padding: 20px;
+        }
+
+        .product-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2C3E50;
+            margin-bottom: 8px;
+        }
+
+        .product-price {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1E63C7;
+            margin-bottom: 12px;
+        }
+
+        .product-meta {
+            display: flex;
+            gap: 12px;
+            font-size: 13px;
+            color: #64748B;
+        }
+
+        /* Filters Sidebar */
+        .listing-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 32px;
+            margin-top: 32px;
+        }
+
+        .filters {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+
+        .filter-group {
+            margin-bottom: 24px;
+        }
+
+        .filter-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2C3E50;
+            margin-bottom: 12px;
+        }
+
+        .filter-options label {
+            display: block;
+            padding: 8px 0;
+            cursor: pointer;
+            color: #64748B;
+            font-size: 14px;
+        }
+
+        .filter-options input[type="checkbox"] {
+            margin-right: 8px;
+        }
+
+        .price-range {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .price-input {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #E8EDF2;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            padding: 14px 32px;
+            background: #1E63C7;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary:hover {
+            background: #1552AB;
+        }
+
+        .btn-secondary {
+            padding: 14px 32px;
+            background: white;
+            color: #1E63C7;
+            border: 2px solid #1E63C7;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 480px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            color: #2C3E50;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #2C3E50;
+            margin-bottom: 8px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #E8EDF2;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #1E63C7;
+        }
+
+        textarea.form-input {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        /* Footer */
+        .footer {
+            background: #2C3E50;
+            color: white;
+            padding: 60px 0 24px;
+            margin-top: 80px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-section h3 {
+            font-size: 18px;
+            margin-bottom: 16px;
+        }
+
+        .footer-section a {
+            display: block;
+            color: #B0BEC5;
+            text-decoration: none;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 24px;
+            border-top: 1px solid #455A64;
+            color: #B0BEC5;
+            font-size: 14px;
+        }
+
+        /* Post Ad Button */
+        .post-ad-btn {
+            position: fixed;
+            bottom: 32px;
+            right: 32px;
+            padding: 16px 32px;
+            background: #27AE60;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 8px 24px rgba(39, 174, 96, 0.4);
+            transition: all 0.2s;
+            z-index: 99;
+        }
+
+        .post-ad-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 32px rgba(39, 174, 96, 0.5);
+        }
+
+        .upload-box {
+            border: 2px dashed #E8EDF2;
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .upload-box:hover {
+            border-color: #1E63C7;
+            background: #F8FBFF;
+        }
+
+        .view-toggle {
+            display: flex;
+            gap: 8px;
+        }
+
+        .view-btn {
+            padding: 8px 12px;
+            border: 2px solid #E8EDF2;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            color: #64748B;
+        }
+
+        .view-btn.active {
+            border-color: #1E63C7;
+            color: #1E63C7;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo">TOPDIK.UZ</a>
+            <div class="search-bar">
+                <input type="text" placeholder="Nimani izlayapsiz?">
+                <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"/>
+                    <path d="m21 21-4.35-4.35"/>
+                </svg>
+            </div>
+            <div class="nav-actions">
+                <div class="lang-switch">
+                    <button class="lang-btn active">UZ</button>
+                    <button class="lang-btn">RU</button>
+                </div>
+                <button class="btn-login" onclick="openModal('loginModal')">Kirish</button>
+                <svg class="cart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="9" cy="21" r="1"/>
+                    <circle cx="20" cy="21" r="1"/>
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                </svg>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Eng yaxshi takliflarni toping</h1>
+            <div class="hero-search">
+                <input type="text" placeholder="Mahsulotlar, xizmatlar, transport...">
+                <button>Qidirish</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Kategoriyalar</h2>
+            </div>
+            <div class="categories-grid">
+                <div class="category-card">
+                    <div class="category-icon cat-electronics">💻</div>
+                    <div class="category-name">Elektronika</div>
+                </div>
+                <div class="category-card">
+                    <div class="category-icon cat-fashion">👕</div>
+                    <div class="category-name">Kiyim-kechak</div>
+                </div>
+                <div class="category-card">
+                    <div class="category-icon cat-home">🏠</div>
+                    <div class="category-name">Uy va bog'</div>
+                </div>
+                <div class="category-card">
+                    <div class="category-icon cat-beauty">💄</div>
+                    <div class="category-name">Sog'liq va go'zallik</div>
+                </div>
+                <div class="category-card">
+                    <div class="category-icon cat-kids">🧸</div>
+                    <div class="category-name">Bola va bolalar</div>
+                </div>
+                <div class="category-card">
+                    <div class="category-icon cat-sports">⚽</div>
+                    <div class="category-name">Sport va dam olish</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Daily Offers -->
+    <section class="section" style="background: white;">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Kunlik takliflar</h2>
+                <div class="view-toggle">
+                    <button class="view-btn active">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7"/>
+                            <rect x="14" y="3" width="7" height="7"/>
+                            <rect x="14" y="14" width="7" height="7"/>
+                            <rect x="3" y="14" width="7" height="7"/>
+                        </svg>
+                    </button>
+                    <button class="view-btn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="8" y1="6" x2="21" y2="6"/>
+                            <line x1="8" y1="12" x2="21" y2="12"/>
+                            <line x1="8" y1="18" x2="21" y2="18"/>
+                            <line x1="3" y1="6" x2="3.01" y2="6"/>
+                            <line x1="3" y1="12" x2="3.01" y2="12"/>
+                            <line x1="3" y1="18" x2="3.01" y2="18"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="offers-grid">
+                <div class="offer-card">
+                    <div class="offer-icon">💻</div>
+                    <div class="offer-title">Laptop HP</div>
+                    <div class="offer-price">4 500 000 so'm</div>
+                </div>
+                <div class="offer-card">
+                    <div class="offer-icon">👟</div>
+                    <div class="offer-title">Krossovka Nike</div>
+                    <div class="offer-price">850 000 so'm</div>
+                </div>
+                <div class="offer-card">
+                    <div class="offer-icon">📱</div>
+                    <div class="offer-title">iPhone 15 Pro</div>
+                    <div class="offer-price">12 000 000 so'm</div>
+                </div>
+                <div class="offer-card">
+                    <div class="offer-icon">🎧</div>
+                    <div class="offer-title">AirPods Pro</div>
+                    <div class="offer-price">1 200 000 so'm</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Product Listing -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">Barcha e'lonlar</h2>
+            <div class="listing-layout">
+                <aside class="filters">
+                    <div class="filter-group">
+                        <div class="filter-title">Kategoriya</div>
+                        <div class="filter-options">
+                            <label><input type="checkbox"> Elektronika</label>
+                            <label><input type="checkbox"> Kiyim-kechak</label>
+                            <label><input type="checkbox"> Uy va bog'</label>
+                            <label><input type="checkbox"> Transport</label>
+                        </div>
+                    </div>
+                    <div class="filter-group">
+                        <div class="filter-title">Narx oralig'i</div>
+                        <div class="price-range">
+                            <input type="number" class="price-input" placeholder="dan">
+                            <span>-</span>
+                            <input type="number" class="price-input" placeholder="gacha">
+                        </div>
+                    </div>
+                    <div class="filter-group">
+                        <div class="filter-title">Holati</div>
+                        <div class="filter-options">
+                            <label><input type="checkbox"> Yangi</label>
+                            <label><input type="checkbox"> Ishlatilgan</label>
+                        </div>
+                    </div>
+                    <div class="filter-group">
+                        <div class="filter-title">Joylashuv</div>
+                        <div class="filter-options">
+                            <label><input type="checkbox"> Toshkent</label>
+                            <label><input type="checkbox"> Samarqand</label>
+                            <label><input type="checkbox"> Buxoro</label>
+                        </div>
+                    </div>
+                    <button class="btn-primary" style="width: 100%;">Filtrlash</button>
+                </aside>
+
+                <div class="product-grid">
+                    <div class="product-card">
+                        <div class="product-image">💻</div>
+                        <div class="product-info">
+                            <div class="product-title">MacBook Pro 16" 2023</div>
+                            <div class="product-price">18 500 000 so'm</div>
+                            <div class="product-meta">
+                                <span>📍 Toshkent</span>
+                                <span>🕒 2 soat oldin</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="product-card">
+                        <div class="product-image">🚗</div>
+                        <div class="product-info">
+                            <div class="product-title">Chevrolet Lacetti 2018</div>
+                            <div class="product-price">75 000 000 so'm</div>
+                            <div class="product-meta">
+                                <span>📍 Samarqand</span>
+                                <span>🕒 5 soat oldin</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="product-card">
+                        <div class="product-image">📱</div>
+                        <div class="product-info">
+                            <div class="product-title">Samsung Galaxy S24 Ultra</div>
+                            <div class="product-price">14 200 000 so'm</div>
+                            <div class="product-meta">
+                                <span>📍 Toshkent</span>
+                                <span>🕒 1 kun oldin</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="product-card">
+                        <div class="product-image">🏠</div>
+                        <div class="product-info">
+                            <div class="product-title">Uy sotiladi, 3 xona</div>
+                            <div class="product-price">2 500 000 000 so'm</div>
+                            <div class="product-meta">
+                                <span>📍 Andijon</span>
+                                <span>🕒 2 kun oldin</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="product-card">
+                        <div class="product-image">⌚</div>
+                        <div class="product-info">
+                            <div class="product-title">Apple Watch Series 9</div>
+                            <div class="product-price">5 500 000 so'm</div>
+                            <div class="product-meta">
+                                <span>📍 Toshkent</span>
+                                <span>🕒 3 soat oldin</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="product-card">
+                        <div class="product-image">🎮</div>
+                        <div class="product-info">
+                            <div class="product-title">PlayStation 5 + 3 o'yin</div>
+                            <div class="product-price">6 800 000 so'm</div>
+                            <div class="product-meta">
+                                <span>📍 Toshkent</span>
+                                <span>🕒 1 soat oldin</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Topdik.uz</h3>
+                    <a href="#">Biz haqimizda</a>
+                    <a href="#">Aloqa</a>
+                    <a href="#">Yordam</a>
+                </div>
+                <div class="footer-section">
+                    <h3>Foydalanuvchilar uchun</h3>
+                    <a href="#">E'lon joylash</a>
+                    <a href="#">Qoidalar</a>
+                    <a href="#">Xavfsizlik</a>
+                </div>
+                <div class="footer-section">
+                    <h3>Kategoriyalar</h3>
+                    <a href="#">Elektronika</a>
+                    <a href="#">Transport</a>
+                    <a href="#">Ko'chmas mulk</a>
+                </div>
+                <div class="footer-section">
+                    <h3>Ijtimoiy tarmoqlar</h3>
+                    <a href="#">Telegram</a>
+                    <a href="#">Instagram</a>
+                    <a href="#">Facebook</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                © 2024 Topdik.uz - Barcha huquqlar himoyalangan
+            </div>
+        </div>
+    </footer>
+
+    <!-- Post Ad Button -->
+    <button class="post-ad-btn" onclick="openModal('postAdModal')">+ E'lon joylashtirish</button>
+
+    <!-- Login Modal
