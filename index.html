@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<!-- index.html — Topdik.uz Homepage: search, categories, product listings -->
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Topdik.uz — O'zbekistondagi eng yaxshi e'lonlar sayti">
+  <title>Topdik.uz — E'lonlar sayti</title>
+  <link rel="stylesheet" href="shared.css">
+  <link rel="stylesheet" href="index.css">
+</head>
+<body data-page="home">
+  <div id="header-container"></div>
+
+  <main>
+    <!-- Hero Search -->
+    <section class="hero" aria-label="Main search">
+      <div class="hero-inner container">
+        <h1 class="hero__title">O'zbekistonda <span class="hero__accent">toping</span> yoki <span class="hero__accent">soting</span></h1>
+        <p class="hero__sub">Milliondan ortiq e'lon — bepul joylash</p>
+        <form class="hero-search" role="search" aria-label="Hero search" id="hero-search-form">
+          <input type="search" id="hero-search-input" class="hero-search__input" 
+                 placeholder="Nima qidiryapsiz?" aria-label="Search products" autocomplete="off">
+          <button type="submit" class="hero-search__btn btn btn--primary">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            Qidirish
+          </button>
+        </form>
+        <div class="hero-tags" aria-label="Popular searches" id="hero-tags"></div>
+      </div>
+    </section>
+
+    <!-- Categories -->
+    <section class="page-section" aria-labelledby="cats-heading">
+      <div class="container">
+        <div class="section-header">
+          <h2 id="cats-heading">Kategoriyalar</h2>
+          <a href="categories.html" class="btn btn--ghost btn--sm">Barchasini ko'rish →</a>
+        </div>
+        <div class="categories-grid" id="categories-grid" role="list"></div>
+      </div>
+    </section>
+
+    <!-- Products -->
+    <section class="page-section" aria-labelledby="products-heading">
+      <div class="container">
+        <div class="section-header">
+          <h2 id="products-heading">Yangi e'lonlar</h2>
+          <a href="categories.html" class="btn btn--ghost btn--sm">Barchasini ko'rish →</a>
+        </div>
+        <div class="products-grid" id="products-grid" role="list" aria-live="polite"></div>
+      </div>
+    </section>
+  </main>
+
+  <div id="footer-container"></div>
+  <div class="toast" id="toast" role="alert" aria-live="assertive"></div>
+
+  <script src="main.js"></script>
+  <script>
+    const POPULAR_TAGS = ["iPhone", "Toyota", "Samsung", "Nike", "Kvartera", "Laptop", "Sofa"];
+
+    function showToast(msg) {
+      const el = document.getElementById("toast");
+      el.textContent = msg;
+      el.classList.add("show");
+      setTimeout(() => el.classList.remove("show"), 2800);
+    }
+
+    function pageInit() {
+      // Hero tags
+      const tagsEl = document.getElementById("hero-tags");
+      tagsEl.innerHTML = POPULAR_TAGS.map(tag =>
+        `<button class="hero-tag" onclick="searchTag('${tag}')">${tag}</button>`
+      ).join("");
+
+      // Categories
+      const catsEl = document.getElementById("categories-grid");
+      catsEl.innerHTML = CATEGORIES.map(cat => `
+        <a href="categories.html?cat=${encodeURIComponent(cat.slug)}" 
+           class="category-card" role="listitem" aria-label="${cat.name}">
+          <span class="category-card__icon" aria-hidden="true">${cat.icon}</span>
+          <span>${cat.name}</span>
+        </a>`).join("");
+
+      // Products
+      const shuffled = shuffleProducts(getAllProducts());
+      const productsEl = document.getElementById("products-grid");
+      productsEl.innerHTML = shuffled.slice(0, 16).map(p => productCardHTML(p)).join("");
+
+      // Hero search
+      document.getElementById("hero-search-form").addEventListener("submit", e => {
+        e.preventDefault();
+        const q = document.getElementById("hero-search-input").value.trim();
+        if (q) window.location.href = `categories.html?q=${encodeURIComponent(q)}`;
+      });
+    }
+
+    function searchTag(tag) {
+      window.location.href = `categories.html?q=${encodeURIComponent(tag)}`;
+    }
+
+    // Override save/cart to show toast
+    const _handleSave = handleSave;
+    window.handleSave = (e, id) => {
+      _handleSave(e, id);
+      showToast(isSaved(id) ? "✓ Saqlangan" : "Saqlangandan o'chirildi");
+    };
+    window.handleCart = (e, id) => {
+      if (!isInCart(id)) {
+        addToCart(id);
+        const btn = e.currentTarget;
+        btn.className = btn.className.replace("btn--primary","btn--success");
+        btn.innerHTML = `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg> ✓`;
+        updateBadges();
+        showToast("✓ Savatga qo'shildi");
+      }
+    };
+  </script>
+</body>
+</html>

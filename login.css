@@ -1,0 +1,112 @@
+/* login.css — Login page styles */
+
+/* ─── LAYOUT ─────────────────────────────────────────────────────────────────── */
+.login-main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 16px;
+  background: linear-gradient(160deg, var(--blue-50) 0%, var(--white) 60%);
+}
+
+/* ─── CARD ────────────────────────────────────────────────────────────────────── */
+.login-card {
+  width: 100%;
+  max-width: 440px;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  padding: 40px 36px;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ─── LOGO ────────────────────────────────────────────────────────────────────── */
+.login-logo {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  margin-bottom: 8px;
+}
+.login-logo .logo-top { color: var(--blue-500); }
+.login-logo .logo-dik { color: var(--gray-900); }
+.login-logo .logo-uz  { color: var(--gray-400); font-size: 0.65em; }
+
+/* ─── HEADINGS ────────────────────────────────────────────────────────────────── */
+.login-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--gray-900);
+  text-align: center;
+  margin-top: 4px;
+}
+.login-sub {
+  font-size: 0.875rem;
+  color: var(--gray-500);
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* ─── FORM ────────────────────────────────────────────────────────────────────── */
+.login-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.form-error {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: var(--red);
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+}
+.login-disclaimer {
+  font-size: 0.75rem;
+  color: var(--gray-400);
+  text-align: center;
+  line-height: 1.5;
+  padding-top: 4px;
+}
+
+/* ─── LOGGED IN STATE ────────────────────────────────────────────────────────── */
+.logged-in-state {
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 0;
+}
+.avatar {
+  width: 72px;
+  height: 72px;
+  background: linear-gradient(135deg, var(--blue-500), var(--blue-700));
+  color: var(--white);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: 700;
+  box-shadow: 0 4px 16px rgba(26,86,219,0.3);
+}
+.logged-name {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--gray-900);
+}
+.logged-label {
+  font-size: 0.85rem;
+  color: var(--gray-500);
+  margin-bottom: 8px;
+}
+
+/* ─── RESPONSIVE ─────────────────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .login-card { padding: 28px 20px; }
+}

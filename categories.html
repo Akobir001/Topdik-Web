@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<!-- categories.html — Browse and filter all product listings by category or search query -->
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Topdik.uz — Barcha e'lonlar va kategoriyalar">
+  <title>Kategoriyalar — Topdik.uz</title>
+  <link rel="stylesheet" href="shared.css">
+  <link rel="stylesheet" href="categories.css">
+</head>
+<body data-page="categories">
+  <div id="header-container"></div>
+
+  <main>
+    <div class="container">
+      <div class="cats-layout">
+        <!-- Sidebar -->
+        <aside class="cats-sidebar" aria-label="Categories filter">
+          <h2 class="sidebar-title">Kategoriyalar</h2>
+          <nav class="sidebar-cats" id="sidebar-cats" role="navigation" aria-label="Category list"></nav>
+        </aside>
+
+        <!-- Main -->
+        <div class="cats-main">
+          <div class="cats-toolbar">
+            <div class="cats-toolbar__left">
+              <h1 class="cats-title" id="cats-title">Barcha e'lonlar</h1>
+              <span class="cats-count" id="cats-count"></span>
+            </div>
+            <div class="cats-toolbar__right">
+              <label class="sr-only" for="sort-select">Saralash</label>
+              <select class="form-select" id="sort-select" style="width:auto">
+                <option value="default">Standart tartibi</option>
+                <option value="price-asc">Narx: arzondan qimmatga</option>
+                <option value="price-desc">Narx: qimmatdan arzonga</option>
+                <option value="title-asc">Nom: A-Z</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="products-grid" id="products-grid" role="list" aria-live="polite"></div>
+          <div class="empty-state" id="empty-state" style="display:none" aria-live="polite">
+            <div class="empty-state__icon" aria-hidden="true">🔍</div>
+            <h3>Hech narsa topilmadi</h3>
+            <p>Boshqa so'z bilan qidiring yoki kategoriya tanlang</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div id="footer-container"></div>
+
+  <script src="main.js"></script>
+  <script>
+    let currentCat = null;
+    let currentQ   = null;
+    let currentSort = "default";
+
+    function pageInit() {
+      // Read URL params
+      const params = new URLSearchParams(window.location.search);
+      currentCat = params.get("cat") || null;
+      currentQ   = params.get("q")   || null;
+
+      buildSidebar();
+      renderProducts();
+
+      document.getElementById("sort-select").addEventListener("change", e => {
+        currentSort = e.target.value;
+        renderProducts();
+      });
+    }
+
+    function buildSidebar() {
+      const el = document.getElementById("sidebar-cats");
+      el.innerHTML = `<a href="categories.html" class="sidebar-cat${!currentCat?'active':''}">
+        <span>🗂️</span> Barchasini ko'rish</a>` +
+        CATEGORIES.map(cat => `
+        <a href="categories.html?cat=${encodeURIComponent(cat.slug)}" 
+           class="sidebar-cat${currentCat===cat.slug?'active':''}"
+           aria-current="${currentCat===cat.slug?'page':'false'}">
+          <span>${cat.icon}</span> ${cat.name}
+        </a>`).join("");
+    }
+
+    function getFiltered() {
+      let list = getAllProducts();
+      if (currentCat) list = list.filter(p => p.category === currentCat);
+      if (currentQ) {
+        const q = currentQ.toLowerCase();
+        list = list.filter(p =>
+          p.title.toLowerCase().includes(q) ||
+          p.desc.toLowerCase().includes(q) ||
+          p.category.toLowerCase().includes(q)
+        );
+      }
+      return list;
+    }
+
+    function sorted(list) {
+      const arr = [...list];
+      if (currentSort === "price-asc")  return arr.sort((a,b) => a.price - b.price);
+      if (currentSort === "price-desc") return arr.sort((a,b) => b.price - a.price);
+      if (currentSort === "title-asc")  return arr.sort((a,b) => a.title.localeCompare(b.title));
+      return shuffleProducts(arr);
+    }
+
+    function renderProducts() {
+      const filtered = getFiltered();
+      const list = sorted(filtered);
+      const grid = document.getElementById("products-grid");
+      const empty = document.getElementById("empty-state");
+      const title = document.getElementById("cats-title");
+      const count = document.getElementById("cats-count");
+
+      if (currentQ) title.textContent = `"${currentQ}" natijalari`;
+      else if (currentCat) title.textContent = currentCat;
+      else title.textContent = "Barcha e'lonlar";
+
+      count.textContent = `${list.length} ta e'lon`;
+
+      if (list.length === 0) {
+        grid.innerHTML = "";
+        empty.style.display = "block";
+      } else {
+        grid.innerHTML = list.map(p => productCardHTML(p)).join("");
+        empty.style.display = "none";
+      }
+    }
+  </script>
+</body>
+</html>

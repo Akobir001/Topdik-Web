@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<!-- create-ad.html — Post a new ad form with image preview and demo product creation -->
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>E'lon berish — Topdik.uz</title>
+  <link rel="stylesheet" href="shared.css">
+  <link rel="stylesheet" href="create-ad.css">
+</head>
+<body data-page="create-ad">
+  <div id="header-container"></div>
+
+  <main>
+    <div class="container ad-page">
+      <h1 class="page-title">E'lon berish</h1>
+
+      <div class="ad-layout">
+        <!-- Form -->
+        <form class="ad-form" id="ad-form" novalidate aria-label="Create advertisement form">
+
+          <div class="form-section">
+            <h2 class="form-section__title">E'lon haqida</h2>
+
+            <div class="form-group">
+              <label class="form-label" for="ad-title">Sarlavha <span class="required" aria-hidden="true">*</span></label>
+              <input type="text" id="ad-title" class="form-input" 
+                     placeholder="Masalan: iPhone 15 Pro, 256GB"
+                     maxlength="100" required aria-required="true">
+              <span class="form-hint">Aniq va qisqa sarlavha yozing</span>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="ad-desc">Tavsif <span class="required" aria-hidden="true">*</span></label>
+              <textarea id="ad-desc" class="form-textarea" 
+                        placeholder="Mahsulot holati, xususiyatlari, qo'shimcha ma'lumotlar..."
+                        rows="5" required aria-required="true"></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="ad-cat">Kategoriya <span class="required" aria-hidden="true">*</span></label>
+              <select id="ad-cat" class="form-select" required aria-required="true">
+                <option value="">Kategoriyani tanlang</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h2 class="form-section__title">Narx</h2>
+            <div class="price-row">
+              <div class="form-group" style="flex:1">
+                <label class="form-label" for="ad-price">Narx <span class="required" aria-hidden="true">*</span></label>
+                <input type="number" id="ad-price" class="form-input" placeholder="0" min="0" required aria-required="true">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="ad-currency">Valyuta</label>
+                <select id="ad-currency" class="form-select">
+                  <option value="uzs">UZS (so'm)</option>
+                  <option value="usd">USD ($)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h2 class="form-section__title">Rasm</h2>
+            <div class="upload-area" id="upload-area" role="button" tabindex="0" 
+                 aria-label="Upload image" aria-describedby="upload-hint">
+              <div class="upload-area__placeholder" id="upload-placeholder">
+                <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                <p>Rasm yuklash uchun bosing</p>
+                <span id="upload-hint" class="form-hint">JPG, PNG, WebP — max 5MB</span>
+              </div>
+              <img id="image-preview" class="upload-preview" alt="Preview" style="display:none">
+              <input type="file" id="ad-image" accept="image/*" style="display:none" aria-label="Choose image file">
+            </div>
+            <button type="button" class="btn btn--ghost btn--sm" id="clear-img" style="display:none;margin-top:8px">
+              Rasmni o'chirish
+            </button>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn--primary btn--lg btn--full" id="submit-btn">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12l7-7 7 7"/></svg>
+              E'lonni joylashtirish
+            </button>
+          </div>
+
+          <div class="form-error" id="form-error" role="alert" style="display:none"></div>
+        </form>
+
+        <!-- Preview -->
+        <div class="ad-preview-panel" aria-label="Live preview" aria-live="polite">
+          <h2 class="form-section__title">Ko'rinish</h2>
+          <div id="ad-preview" class="ad-preview-card">
+            <div class="preview-placeholder">
+              <p>Ma'lumot kiritganingizda ko'rinish paydo bo'ladi</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div id="footer-container"></div>
+  <div class="toast" id="toast" role="alert" aria-live="assertive"></div>
+
+  <script src="main.js"></script>
+  <script>
+    let previewImgData = null;
+
+    function pageInit() {
+      // Populate categories
+      const catSelect = document.getElementById("ad-cat");
+      CATEGORIES.forEach(cat => {
+        const opt = document.createElement("option");
+        opt.value = cat.slug;
+        opt.textContent = cat.name;
+        catSelect.appendChild(opt);
+      });
+
+      // Live preview
+      ["ad-title","ad-desc","ad-cat","ad-price","ad-currency"].forEach(id => {
+        document.getElementById(id).addEventListener("input", updatePreview);
+        document.getElementById(id).addEventListener("change", updatePreview);
+      });
+
+      // Image upload
+      const uploadArea = document.getElementById("upload-area");
+      const fileInput  = document.getElementById("ad-image");
+
+      uploadArea.addEventListener("click", () => fileInput.click());
+      uploadArea.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") fileInput.click(); });
+
+      uploadArea.addEventListener("dragover", e => { e.preventDefault(); uploadArea.classList.add("drag-over"); });
+      uploadArea.addEventListener("dragleave", () => uploadArea.classList.remove("drag-over"));
+      uploadArea.addEventListener("drop", e => {
+        e.preventDefault();
+        uploadArea.classList.remove("drag-over");
+        const file = e.dataTransfer.files[0];
+        if (file) handleFile(file);
+      });
+
+      fileInput.addEventListener("change", () => {
+        if (fileInput.files[0]) handleFile(fileInput.files[0]);
+      });
+
+      document.getElementById("clear-img").addEventListener("click", clearImage);
+
+      // Form submit
+      document.getElementById("ad-form").addEventListener("submit", handleSubmit);
+    }
+
+    function handleFile(file) {
+      if (!file.type.startsWith("image/")) { showError("Faqat rasm fayli yuklang"); return; }
+      if (file.size > 5 * 1024 * 1024) { showError("Fayl hajmi 5MB dan katta"); return; }
+
+      const reader = new FileReader();
+      reader.onload = e => {
+        previewImgData = e.target.result;
+        document.getElementById("image-preview").src = previewImgData;
+        document.getElementById("image-preview").style.display = "block";
+        document.getElementById("upload-placeholder").style.display = "none";
+        document.getElementById("clear-img").style.display = "inline-flex";
+        updatePreview();
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function clearImage() {
+      previewImgData = null;
+      document.getElementById("ad-image").value = "";
+      document.getElementById("image-preview").style.display = "none";
+      document.getElementById("upload-placeholder").style.display = "flex";
+      document.getElementById("clear-img").style.display = "none";
+      updatePreview();
+    }
+
+    function updatePreview() {
+      const title    = document.getElementById("ad-title").value.trim();
+      const desc     = document.getElementById("ad-desc").value.trim();
+      const cat      = document.getElementById("ad-cat").value;
+      const price    = document.getElementById("ad-price").value;
+      const currency = document.getElementById("ad-currency").value;
+
+      const previewEl = document.getElementById("ad-preview");
+
+      if (!title && !price) {
+        previewEl.innerHTML = `<div class="preview-placeholder"><p>Ma'lumot kiritganingizda ko'rinish paydo bo'ladi</p></div>`;
+        return;
+      }
+
+      const imgSrc = previewImgData || `https://picsum.photos/seed/preview${Date.now()%100}/400/300`;
+      const priceStr = price
+        ? (currency === "usd" ? `$${Number(price).toLocaleString()}` : `${Number(price).toLocaleString()} so'm`)
+        : "—";
+
+      previewEl.innerHTML = `
+        <div class="product-card" style="box-shadow:none;border:none;max-width:none">
+          <div class="product-card__img-wrap" style="aspect-ratio:16/9">
+            <img src="${imgSrc}" alt="Preview" class="product-card__img">
+          </div>
+          <div class="product-card__body">
+            <span class="product-card__cat">${cat || "Kategoriya"}</span>
+            <p class="product-card__title" style="-webkit-line-clamp:3">${title || "Sarlavha"}</p>
+            ${desc ? `<p style="font-size:.8rem;color:var(--gray-500);margin-top:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${desc}</p>` : ""}
+            <div class="product-card__footer">
+              <strong class="product-card__price">${priceStr}</strong>
+            </div>
+          </div>
+        </div>`;
+    }
+
+    function showError(msg) {
+      const el = document.getElementById("form-error");
+      el.textContent = "⚠️ " + msg;
+      el.style.display = "block";
+      setTimeout(() => el.style.display = "none", 4000);
+    }
+
+    function handleSubmit(e) {
+      e.preventDefault();
+      const title    = document.getElementById("ad-title").value.trim();
+      const desc     = document.getElementById("ad-desc").value.trim();
+      const cat      = document.getElementById("ad-cat").value;
+      const price    = parseFloat(document.getElementById("ad-price").value);
+      const currency = document.getElementById("ad-currency").value;
+
+      if (!title)    { showError("Sarlavha kiriting"); return; }
+      if (!desc)     { showError("Tavsif kiriting"); return; }
+      if (!cat)      { showError("Kategoriya tanlang"); return; }
+      if (!price || price <= 0) { showError("To'g'ri narx kiriting"); return; }
+
+      const extra = getExtra();
+      const newId = 10000 + extra.length + 1;
+      const newProduct = {
+        id: newId,
+        title, desc, category: cat,
+        price: currency === "usd" ? Math.round(price * 12700) : price,
+        usd:   currency === "usd" ? price : Math.round(price / 12700),
+        user:  getUser() || "mehmondo",
+        img:   previewImgData || `https://picsum.photos/seed/ad${newId}/400/300`,
+      };
+
+      extra.push(newProduct);
+      localStorage.setItem("td_extra", JSON.stringify(extra));
+
+      const toast = document.getElementById("toast");
+      toast.textContent = "✓ E'lon joylashtirildi!";
+      toast.classList.add("show");
+
+      setTimeout(() => {
+        toast.classList.remove("show");
+        window.location.href = `product.html?id=${newId}`;
+      }, 1800);
+    }
+  </script>
+</body>
+</html>

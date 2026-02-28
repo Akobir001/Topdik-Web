@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<!-- cart.html — Shopping cart page with item list, total price, and checkout button -->
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Savat — Topdik.uz</title>
+  <link rel="stylesheet" href="shared.css">
+  <link rel="stylesheet" href="cart.css">
+</head>
+<body data-page="cart">
+  <div id="header-container"></div>
+
+  <main>
+    <div class="container cart-page">
+      <h1 class="page-title">
+        <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+        Savat
+      </h1>
+
+      <div class="cart-layout" id="cart-layout">
+        <div class="cart-items" id="cart-items" role="list" aria-live="polite"></div>
+        <aside class="cart-summary" id="cart-summary">
+          <h2 class="summary-title">Buyurtma xulosasi</h2>
+          <div class="summary-row">
+            <span id="summary-count">0 ta mahsulot</span>
+            <strong id="summary-total">0</strong>
+          </div>
+          <div class="summary-divider"></div>
+          <div class="summary-row summary-row--total">
+            <span>Jami:</span>
+            <strong id="summary-grand" class="summary-grand">0</strong>
+          </div>
+          <button class="btn btn--primary btn--full btn--lg" id="checkout-btn" onclick="handleCheckout()">
+            Buyurtma berish
+          </button>
+          <a href="index.html" class="btn btn--ghost btn--full" style="margin-top:8px">Xarid davom etish</a>
+        </aside>
+      </div>
+
+      <div class="empty-state" id="empty-state" style="display:none">
+        <div class="empty-state__icon" aria-hidden="true">🛒</div>
+        <h3>Savat bo'sh</h3>
+        <p>Mahsulotlarni savatga qo'shing</p>
+        <a href="index.html" class="btn btn--primary" style="margin-top:20px">Xaridga o'tish</a>
+      </div>
+    </div>
+  </main>
+
+  <div id="footer-container"></div>
+  <div class="toast" id="toast" role="alert" aria-live="assertive"></div>
+
+  <script src="main.js"></script>
+  <script>
+    function pageInit() { renderCart(); }
+
+    function renderCart() {
+      const ids = getCart();
+      const all = getAllProducts();
+      const items = ids.map(id => all.find(p => p.id === id)).filter(Boolean);
+
+      const cartItems = document.getElementById("cart-items");
+      const emptyState = document.getElementById("empty-state");
+      const cartLayout = document.getElementById("cart-layout");
+
+      if (items.length === 0) {
+        cartLayout.style.display = "none";
+        emptyState.style.display = "block";
+      } else {
+        cartLayout.style.display = "grid";
+        emptyState.style.display = "none";
+        cartItems.innerHTML = items.map(p => `
+          <article class="cart-item" role="listitem" data-id="${p.id}">
+            <a href="product.html?id=${p.id}">
+              <img src="${p.img}" alt="${p.title}" class="cart-item__img">
+            </a>
+            <div class="cart-item__info">
+              <a href="product.html?id=${p.id}" class="cart-item__title">${p.title}</a>
+              <span class="product-card__cat">${p.category}</span>
+              <div class="cart-item__price">${formatPrice(p)}</div>
+            </div>
+            <button class="cart-item__remove btn btn--ghost btn--sm" 
+                    aria-label="O'chirish: ${p.title}"
+                    onclick="removeItem(${p.id})">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6l-1 14H6L5 6M10 11v6M14 11v6M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/></svg>
+              O'chirish
+            </button>
+          </article>`).join("");
+
+        updateSummary(items);
+      }
+    }
+
+    function updateSummary(items) {
+      const total = getCurrency() === "usd"
+        ? items.reduce((s, p) => s + p.usd, 0)
+        : items.reduce((s, p) => s + p.price, 0);
+      const label = getCurrency() === "usd" ? `$${total.toLocaleString()}` : `${total.toLocaleString()} so'm`;
+      document.getElementById("summary-count").textContent = `${items.length} ta mahsulot`;
+      document.getElementById("summary-total").textContent = label;
+      document.getElementById("summary-grand").textContent = label;
+    }
+
+    function removeItem(id) {
+      removeFromCart(id);
+      updateBadges();
+      renderCart();
+    }
+
+    function handleCheckout() {
+      const toast = document.getElementById("toast");
+      toast.textContent = "🎉 Buyurtma qabul qilindi! Tez orada siz bilan bog'lanamiz.";
+      toast.classList.add("show");
+      localStorage.removeItem("td_cart");
+      updateBadges();
+      setTimeout(() => { toast.classList.remove("show"); renderCart(); }, 3000);
+    }
+  </script>
+</body>
+</html>

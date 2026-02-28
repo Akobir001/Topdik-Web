@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<!-- saved.html — Saved/wishlist items page, stored in localStorage -->
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Saqlangan — Topdik.uz</title>
+  <link rel="stylesheet" href="shared.css">
+  <link rel="stylesheet" href="saved.css">
+</head>
+<body data-page="saved">
+  <div id="header-container"></div>
+
+  <main>
+    <div class="container saved-page">
+      <div class="page-header">
+        <h1 class="page-title">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          Saqlangan e'lonlar
+        </h1>
+        <span class="page-count" id="saved-count" aria-live="polite"></span>
+      </div>
+
+      <div class="products-grid" id="saved-grid" role="list" aria-live="polite"></div>
+
+      <div class="empty-state" id="empty-state" style="display:none">
+        <div class="empty-state__icon" aria-hidden="true">🤍</div>
+        <h3>Hali hech narsa saqlanmagan</h3>
+        <p>E'lonlarni saqlash uchun yurak belgisini bosing</p>
+        <a href="index.html" class="btn btn--primary" style="margin-top:20px">E'lonlarni ko'rish</a>
+      </div>
+    </div>
+  </main>
+
+  <div id="footer-container"></div>
+
+  <script src="main.js"></script>
+  <script>
+    function pageInit() { renderSaved(); }
+
+    function renderSaved() {
+      const ids = getSaved();
+      const all = getAllProducts();
+      const items = ids.map(id => all.find(p => p.id === id)).filter(Boolean);
+
+      document.getElementById("saved-count").textContent = items.length ? `${items.length} ta e'lon` : "";
+
+      if (items.length === 0) {
+        document.getElementById("saved-grid").innerHTML = "";
+        document.getElementById("empty-state").style.display = "block";
+      } else {
+        document.getElementById("empty-state").style.display = "none";
+        document.getElementById("saved-grid").innerHTML = items.map(p => productCardHTML(p)).join("");
+      }
+    }
+
+    // Re-render after unsave so card disappears
+    const _orig = window.handleSave;
+    window.handleSave = (e, id) => {
+      _orig(e, id);
+      setTimeout(renderSaved, 300);
+    };
+  </script>
+</body>
+</html>
